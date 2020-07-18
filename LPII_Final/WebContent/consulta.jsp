@@ -47,13 +47,7 @@
 		        </tr>
 		    </thead>
 		    <tbody>
-				<c:forEach items="${requestScope.normativas}" var="item">
-					<tr>
-			         	<td>${item.normativa_id}</td>
-			         	<td>${item.normativa_nombre}</td>
-			         	<!-- <td><a href="ServletNormativa?accion=buscar&codigo=${row.normativa_id}">Editar</a></td> -->
-			        </tr>
-				</c:forEach>
+			
 		    </tbody>
 		</table>
 	</div>
@@ -61,33 +55,44 @@
 
 	<!-- Optional JavaScript -->
     <!-- jQuery first, then DataTables for Bootstrap 4, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/v/bs4/jq-3.3.1/dt-1.10.21/datatables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-
-	<script type="text/javascript">
+	<!-- jQuery Validation (Minificados) -->
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.1/dist/jquery.validate.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.1/dist/additional-methods.min.js"></script>
+	
+	<script>
+	
 	$(document).ready( function () {
 	    $('#table_id').DataTable( {
-	    	searching: false
+	    	searching: false,
+	    	"info": false
 	    });
 	} );
 	
+	
 	$(".btn-primary").click(function() {
+		
 		var desde = $("#inputDesde").val();
 		var hasta = $("#inputHasta").val();
 		
-		$("#table_id tbody").empty();
-		
-		$.getJSON("ServletAuto?accion=CONSULTA_AUTO", {desde:desde, hasta:hasta}, function(response) {
-			$.each(response, function(index, item) {
-				$("#table_id").append(
-						"<tr><td>" + item.codigo + "</td><td>" + item.descripcion +
-						"</td><td>" + item.stock + "</td><td>" + item.precio +
-						"</td><td>" + item.marca + "</td></tr>"
-				);
+		if(desde.length > 0 && hasta.length > 0) {
+			$("#table_id tbody").empty();
+			
+			$.getJSON("ServletAuto?accion=CONSULTA", {desde:desde, hasta:hasta}, function(response) {
+				$.each(response, function(index, item) {
+					$("#table_id").append(
+							"<tr><td>" + item.codigo + "</td><td>" + item.descripcion +
+							"</td><td>" + item.stock + "</td><td>" + item.precio +
+							"</td><td>" + item.marca + "</td></tr>"
+					);
+				});
 			});
-		});
+		}
+		
 	});
 	
 	</script>

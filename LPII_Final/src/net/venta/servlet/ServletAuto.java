@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
 import net.venta.entidad.Auto;
 import net.venta.entidad.Marca;
 import net.venta.service.AutoService;
@@ -45,18 +47,23 @@ public class ServletAuto extends HttpServlet {
 		if (action.equals("REGISTRAR")) {
 			registraAuto(request, response);
 		}
-		else if(action.equals("CONSULTA_AUTO")) {
+		else if(action.equals("CONSULTA")) {
 			consultaAuto(request, response);
 		}
-		else if (action.equals("LISTAR_MARCAS")) {
+		else if (action.equals("LISTA")) {
 			listarTodasMarcas(request, response);
 		}
 	}
 
 	private void listarTodasMarcas(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<Marca> lista = serviceMarca.listarMarcas();
-		request.setAttribute("marcas", lista);
-		request.getRequestDispatcher("/registro.jsp").forward(request, response);
+		
+		Gson gson = new Gson();
+		String json = gson.toJson(lista);
+		response.setContentType("application/json;charset=UTF-8");
+		
+		PrintWriter salida = response.getWriter();
+		salida.println(json);
 	}
 
 	private void registraAuto(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -81,7 +88,7 @@ public class ServletAuto extends HttpServlet {
 			request.setAttribute("MENSAJE", "Error en el registro");
 		}
 		
-		request.getRequestDispatcher("/ServletAuto?accion=LISTAR_MARCAS").forward(request, response);
+		request.getRequestDispatcher("/registro.jsp").forward(request, response);
 	}
 
 	private void consultaAuto(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -91,19 +98,12 @@ public class ServletAuto extends HttpServlet {
 		
 		List<Auto> lista = serviceAuto.listarAutosRangoPrecio(desde, hasta);
 		
-		JsonArrayBuilder arreglo = Json.createArrayBuilder();
-		
-		for(Auto bean:lista) {
-			JsonObject objeto = Json.createObjectBuilder().add("codigo", bean.getCodigo()).
-					add("descripcion", bean.getDescripcion()).add("stock", bean.getStock()).
-					add("precio", bean.getPrecio()).add("marca", bean.getMarca()).build();
-			
-			arreglo.add(objeto);
-		}
+		Gson gson = new Gson();
+		String json = gson.toJson(lista);
 		
 		response.setContentType("application/json;charset=UTF-8");
 		PrintWriter salida = response.getWriter();
-		salida.println(arreglo.build());
+		salida.println(json);
 		
 	}
 
