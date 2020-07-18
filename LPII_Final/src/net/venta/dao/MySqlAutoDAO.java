@@ -97,7 +97,7 @@ public class MySqlAutoDAO implements AutoDAO{
 		try {
 			
 			cn = MySqlBDConexion.getConexion();
-			String sql = "Select A.cod_auto, A.des_auto, A.stock_auto, A.pre_auto, M.nom_marca from tb_auto A inner join tb_marca M on A.cod_marca = M.cod_marca where A.pre_auto >= ? and A.pre_auto <= ?";
+			String sql = "Select A.cod_auto, A.des_auto, A.stock_auto, A.pre_auto, M.nom_marca from tb_auto A inner join tb_marca M on A.cod_marca = M.cod_marca where A.pre_auto between ? and ?";
 			pstm = cn.prepareStatement(sql);
 			
 			pstm.setDouble(1, desde);
